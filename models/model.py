@@ -1,9 +1,8 @@
+import etl_job as etl
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
-import sys
-import etl_job as etl
 
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
