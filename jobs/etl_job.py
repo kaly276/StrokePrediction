@@ -18,10 +18,7 @@ def start():
 
     # Execute ETL pipeline
     data = extract_data(spark)
-
-    # Clean data
     data_cleaned = clean_data(data)
-
     data_transformed = transform_data(data_cleaned)
     load_data(data_transformed)
 
@@ -75,13 +72,11 @@ def transform_data(data):
     indexer = StringIndexer(inputCols=inputs, outputCols=outputs)
     indexed = indexer.fit(data).transform(data)
     indexed = indexed.select(*outputs)
-    indexed.show()
 
     # Use OneHotEncoder to map the numerical values to vectors
     encoder = OneHotEncoder(inputCols=indexed.columns, outputCols=inputs)
     encoded = encoder.fit(indexed).transform(indexed)
     encoded = encoded.select(*inputs)
-    encoded.show()
 
     # Combine numerical features into a single DataFrame
     w = Window.orderBy(lit(1))
@@ -96,6 +91,11 @@ def transform_data(data):
     # Convert sparse vectors to NumPy arrays
     assembled = assembled.toPandas()
     assembled['features'] = assembled['features'].apply(np.asarray)
+    
+    # Transform feature arrays to columns
+    new_columns = range(len(df['features'][0]))
+    new_data = assembled.features.to_list()
+    assembled = assembled.DataFrame(new_data, columns=new_columns)
 
     return assembled
 
