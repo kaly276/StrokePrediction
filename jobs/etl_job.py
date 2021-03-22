@@ -18,13 +18,14 @@ def start():
 
     # Execute ETL pipeline
     data = extract_data(spark)
+
     # Clean data
     data_cleaned = clean_data(data)
 
     data_transformed = transform_data(data_cleaned)
-    #load_data(data_transformed)
+    load_data(data_transformed)
 
-    # Return pandas DataFrame for analysis
+    # Return pandas DataFrame for analysis and training
     return data_transformed
 
 def extract_data(spark):
